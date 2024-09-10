@@ -6,29 +6,19 @@ import { Spaceship } from './objects/spaceship.js';  // Import the Spaceship cla
 import { AsteroidManager } from './objects/AsteroidManager.js';  // Import the AsteroidManager class
 import { loadAsteroids } from './models/loadAsteroids.js';  // Import the loadAsteroids function
 import { setupInputControls, moveLeft, moveRight, moveUp, moveDown } from './controls/inputControls';
-import { createHUD, updateTimer, asteroidSpeed } from './hud/hud.js';
-import { checkCollisions } from './game/collision.js';
-import Stats from 'stats.js'; // Import Stats.js
+import { createHUD, updateTimer } from './hud/hud.js';
+import Stats from 'stats.js';
 
 // Initialize Stats.js
 const stats = new Stats();
 stats.showPanel(2);  // 0: FPS, 1: ms/frame, 2: memory usage (if supported)
 document.body.appendChild(stats.dom);  // Add stats display to the DOM
 
-
-// Initialize input controls
-setupInputControls();
 // Create and initialize the HUD
 const { timerElement } = createHUD();
 updateTimer(timerElement);
 
-
-
-
-
 // Set up the scene, camera, and renderer
-// const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5000);
-// const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
@@ -57,47 +47,49 @@ textureLoader.load('assets/spacebox/textures/lambert1_emissive.jpeg', (texture) 
   renderer.render(scene, camera);  // Initial render of the scene before game starts
 });
 
-
-
-
-
-
 /* Spaceship */
 // Load the spaceship model
-// Spaceship path
 const spaceshipPath = 'assets/sf_light-_fighter_x6/scene.gltf';
 const spaceship = new Spaceship(scene, spaceshipPath);  // Create a spaceship instance
 
-// Load the spaceship
+// Load the spaceship immediately so it's visible before the start button is pressed
 spaceship.load()
   .then(() => {
-    // Render the scene after spaceship is loaded
-    renderer.render(scene, camera);
+    console.log('Spaceship loaded');
+    renderer.render(scene, camera);  // Ensure spaceship is rendered
   })
   .catch((error) => {
-    console.error('Failed to load spaceship:', error);
+    console.error('Error loading spaceship:', error);
   });
-// Animation loop
-function animate(asteroidManager) {
-  stats.begin();  // Begin measuring frame time with Stats.js
-  requestAnimationFrame(() => animate(asteroidManager));  // Continue the loop
 
-  // Move the spaceship
-  spaceship.move(moveLeft, moveRight, moveUp, moveDown);  // Use the spaceship class for movement
+/* Game logic */
+let asteroidManager = null;
+let gameStarted = false;  // State to track if the game has started
 
-  // Update the asteroid positions
-  asteroidManager.updateAsteroids();  // Update asteroid positions every frame
+// Main animation loop
+function animate() {
+  stats.begin();  // Begin measuring stats
+  requestAnimationFrame(animate);
 
-  controls.update();
-  
+  if (gameStarted) {
+    // Move the spaceship based on input controls
+    spaceship.move(moveLeft, moveRight, moveUp, moveDown);
+
+    // Make the camera follow the spaceship
+    camera.follow(spaceship.spaceship);
+
+    // Update asteroid positions
+    if (asteroidManager) {
+      asteroidManager.updateAsteroids();
+    }
+  }
+
   // Render the scene
   renderer.render(scene, camera);
-
-  stats.end();  // End measuring frame time with Stats.js
+  stats.end();  // End measuring stats
 }
 
-
-
+setupInputControls();  // Initialize input controls
 
 // Handle window resizing
 window.addEventListener('resize', () => {
@@ -106,12 +98,7 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
 });
 
-
-
-
-
-/* Game logic */
-// Start button and game start animation
+/* Start button and game start animation */
 const startButton = StartButton();
 document.body.appendChild(startButton);
 
@@ -125,32 +112,18 @@ startButton.addEventListener('click', () => {
   const endPosition = { x: 0, y: 15, z: -40 };  // Ending behind the spaceship
   const sideRadiusX = 30;  // X radius for elliptical motion to create side view effect
 
-  const totalDuration = 3000;  // Duration of the animation in milliseconds (20 seconds)
-  let startTime = null;  // Time when animation starts
-
-  let lastRenderTime = 0;
-  let frameNumber = 0;
-  let isAnimating = false;  // Guard to prevent re-entrant calls
+  const totalDuration = 3000;  // Duration of the animation in milliseconds
+  let startTime = null;
 
   function animateCamera(timestamp) {
-    if (isAnimating) return;  // Skip this call if already animating
-
-    isAnimating = true;
-    frameNumber++;
-
-    // Calculate the time difference (delta) between the current frame and the previous one
-    const delta = timestamp - lastRenderTime;
-    lastRenderTime = timestamp;  // Update lastRenderTime at the start of the frame
-
-    if (!startTime) startTime = timestamp; // Set the start time if it's the first frame
+    if (!startTime) startTime = timestamp;
     const elapsedTime = timestamp - startTime;
     const t = Math.min(elapsedTime / totalDuration, 1);
 
-    const angle = Math.PI * t;  
-    camera.position.x = sideRadiusX * Math.sin(angle); 
-    camera.position.y = THREE.MathUtils.lerp(startPosition.y, endPosition.y, t);  
+    const angle = Math.PI * t;
+    camera.position.x = sideRadiusX * Math.sin(angle);
+    camera.position.y = THREE.MathUtils.lerp(startPosition.y, endPosition.y, t);
     camera.position.z = THREE.MathUtils.lerp(startPosition.z, endPosition.z, t);
-
     camera.lookAt(spaceship.spaceship.position);
 
     renderer.render(scene, camera);  // Ensure the camera is rendered during each frame
@@ -158,29 +131,29 @@ startButton.addEventListener('click', () => {
     if (t < 1) {
       requestAnimationFrame(animateCamera);  // Continue animation if time hasn't reached 1
     } else {
-       // Start the game loop after animation completes
+      gameStarted = true;  // Mark the game as started
 
       // Load asteroids into the scene
       const asteroidPath = 'assets/asteroids_pack_metallic_version/scene.gltf';
       loadAsteroids(asteroidPath)
         .then((asteroidMeshes) => {
-          const asteroidManager = new AsteroidManager(asteroidMeshes, scene);  // Initialize AsteroidManager
-          
+          asteroidManager = new AsteroidManager(asteroidMeshes, scene);  // Initialize AsteroidManager
+
           // Use a single interval for spawning both types of asteroids
           setInterval(() => asteroidManager.spawnAsteroids(), 25);
-      
-          // Start the animation loop with the asteroid manager
-          requestAnimationFrame(() => animate(asteroidManager));
+
+          // Start the main game loop after camera animation is complete
         })
         .catch((error) => {
           console.error('Failed to load asteroids:', error);
-        }); 
+        });
     }
-
-    isAnimating = false;
   }
 
   requestAnimationFrame(animateCamera);  // Start the camera animation
 });
+
+// Start the animation loop (the camera follow happens once the game starts)
+animate();
 
 renderer.render(scene, camera);  // Initial render to ensure something appears

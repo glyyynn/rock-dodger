@@ -36,12 +36,12 @@ class Asteroid {
     this.mesh.position.z -= speed;  // Move the asteroid along the Z axis (towards the camera)
 
     // Apply rotation for spinning effect
-    this.mesh.rotation.x += this.rotationSpeed.x;
-    this.mesh.rotation.y += this.rotationSpeed.y;
-    this.mesh.rotation.z += this.rotationSpeed.z;
+    // this.mesh.rotation.x += this.rotationSpeed.x;
+    // this.mesh.rotation.y += this.rotationSpeed.y;
+    // this.mesh.rotation.z += this.rotationSpeed.z;
 
     // Remove asteroid if it's out of bounds
-    if (this.mesh.position.z < -50) {
+    if (this.mesh.position.z < -2000) {
       this.scene.remove(this.mesh);  // Remove from scene
       return false;  // Indicate that the asteroid should be removed from the array
     }
