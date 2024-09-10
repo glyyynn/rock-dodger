@@ -1,0 +1,1 @@
+*.png[[:space:]]*.jpeg[[:space:]]*.gltf[[:space:]]*.bin[[:space:]]*.jpg filter=lfs diff=lfs merge=lfs -text
