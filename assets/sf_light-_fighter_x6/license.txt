@@ -1,0 +1,8 @@
+Model Information:
+* title:	SF Light- Fighter X6
+* source:	https://sketchfab.com/3d-models/sf-light-fighter-x6-24a995860c51424da2d93e23d0c0ec57
+* author:	CGPitbull (https://sketchfab.com/CGPitbull)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

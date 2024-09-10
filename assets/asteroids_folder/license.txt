@@ -1,0 +1,8 @@
+Model Information:
+* title:	Asteroid pack - Low-poly Game Model
+* source:	https://sketchfab.com/3d-models/asteroid-pack-low-poly-game-model-5094c0321c4b49c889fe7e98a8b496fe
+* author:	Random Polygons (https://sketchfab.com/randompolygons)
+
+Model License:
+* license type:	SKETCHFAB Editorial (https://sketchfab.com/licenses)
+* requirements:	Use only in connection with events that are newsworthy or of public interest
