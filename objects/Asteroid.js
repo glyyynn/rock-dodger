@@ -23,9 +23,9 @@ class Asteroid {
 
     // Define a random rotation speed for each axis (for spinning effect)
     this.rotationSpeed = {
-      x: (Math.random() - 0.5) * 0.02,  // Random small rotation speed on X axis
-      y: (Math.random() - 0.5) * 0.02,  // Random small rotation speed on Y axis
-      z: (Math.random() - 0.5) * 0.02   // Random small rotation speed on Z axis
+      x: (Math.random() - 0.5) * 0.01,  // Random small rotation speed on X axis
+      y: (Math.random() - 0.5) * 0.01,  // Random small rotation speed on Y axis
+      z: (Math.random() - 0.5) * 0.01   // Random small rotation speed on Z axis
     };
 
     this.scene.add(this.mesh);  // Add asteroid to the scene
@@ -36,9 +36,9 @@ class Asteroid {
     this.mesh.position.z -= speed;  // Move the asteroid along the Z axis (towards the camera)
 
     // Apply rotation for spinning effect
-    // this.mesh.rotation.x += this.rotationSpeed.x;
-    // this.mesh.rotation.y += this.rotationSpeed.y;
-    // this.mesh.rotation.z += this.rotationSpeed.z;
+    this.mesh.rotation.x += this.rotationSpeed.x;
+    this.mesh.rotation.y += this.rotationSpeed.y;
+    this.mesh.rotation.z += this.rotationSpeed.z;
 
     // Remove asteroid if it's out of bounds
     if (this.mesh.position.z < -2000) {

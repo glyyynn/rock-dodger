@@ -9,7 +9,7 @@ export class Spaceship {
     this.speed = 20;  // Base movement speed
     this.smoothness = 0.1;  // LERP factor for smooth movement
     this.velocity = new THREE.Vector3(0, 0, 0);  // Velocity for inertia
-    this.acceleration = 0.5;  // Controls how fast the spaceship reaches full speed
+    this.acceleration = 1.5;  // Controls how fast the spaceship reaches full speed
     this.drag = 0.95;  // Factor to gradually reduce the velocity (inertia)
   }
 
@@ -65,8 +65,8 @@ export class Spaceship {
       this.spaceship.position.add(this.velocity);  // Update position based on velocity
 
       // Clamp movement within boundaries (adjust limits as needed)
-      this.spaceship.position.x = THREE.MathUtils.clamp(this.spaceship.position.x, -1000, 1000);
-      this.spaceship.position.y = THREE.MathUtils.clamp(this.spaceship.position.y, -800, 800);
+      this.spaceship.position.x = THREE.MathUtils.clamp(this.spaceship.position.x, -2500, 2500);
+      this.spaceship.position.y = THREE.MathUtils.clamp(this.spaceship.position.y, -2500, 2500);
 
       // Calculate target tilt angles based on movement
       const targetTiltZ = left ? -maxTiltZ : right ? +maxTiltZ : 0;

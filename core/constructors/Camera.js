@@ -5,7 +5,7 @@ class Camera {
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     camera.position.set(0, 15, -40);  // Start at a position behind the spaceship
     
-    this.offset = new THREE.Vector3(0, 10, -40);  // Set offset from the spaceship
+    this.offset = new THREE.Vector3(0, 15, -40);  // Set offset from the spaceship
 
     // Add the follow method directly to the camera object
     camera.follow = (target) => {

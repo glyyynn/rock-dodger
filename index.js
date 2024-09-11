@@ -70,7 +70,6 @@ let gameStarted = false;  // State to track if the game has started
 function animate() {
   stats.begin();  // Begin measuring stats
   requestAnimationFrame(animate);
-
   if (gameStarted) {
     // Move the spaceship based on input controls
     spaceship.move(moveLeft, moveRight, moveUp, moveDown);
@@ -108,7 +107,7 @@ startButton.addEventListener('click', () => {
   document.body.removeChild(startButton);
 
   // Initial and target camera positions
-  const startPosition = { x: 0, y: 15, z: 30 };  // Starting in front of the spaceship
+  const startPosition = { x: 0, y: 15, z: 40 };  // Starting in front of the spaceship
   const endPosition = { x: 0, y: 15, z: -40 };  // Ending behind the spaceship
   const sideRadiusX = 30;  // X radius for elliptical motion to create side view effect
 
@@ -121,7 +120,7 @@ startButton.addEventListener('click', () => {
     const t = Math.min(elapsedTime / totalDuration, 1);
 
     const angle = Math.PI * t;
-    camera.position.x = sideRadiusX * Math.sin(angle);
+    camera.position.x = sideRadiusX * Math.sin(angle)
     camera.position.y = THREE.MathUtils.lerp(startPosition.y, endPosition.y, t);
     camera.position.z = THREE.MathUtils.lerp(startPosition.z, endPosition.z, t);
     camera.lookAt(spaceship.spaceship.position);
@@ -135,25 +134,28 @@ startButton.addEventListener('click', () => {
 
       // Load asteroids into the scene
       const asteroidPath = 'assets/asteroids_pack_metallic_version/scene.gltf';
+
       loadAsteroids(asteroidPath)
         .then((asteroidMeshes) => {
           asteroidManager = new AsteroidManager(asteroidMeshes, scene);  // Initialize AsteroidManager
 
           // Use a single interval for spawning both types of asteroids
-          setInterval(() => asteroidManager.spawnAsteroids(), 25);
+          setInterval(() => asteroidManager.spawnAsteroids(), 4);
 
           // Start the main game loop after camera animation is complete
         })
         .catch((error) => {
           console.error('Failed to load asteroids:', error);
         });
+
+      // Start the animation loop (the camera follow happens once the game starts)
+      animate();
+
+      return gameStarted;
     }
   }
 
   requestAnimationFrame(animateCamera);  // Start the camera animation
 });
-
-// Start the animation loop (the camera follow happens once the game starts)
-animate();
 
 renderer.render(scene, camera);  // Initial render to ensure something appears
