@@ -31,7 +31,7 @@ controls.enableRotate = true;
 controls.enablePan = false;
 
 // Position the camera inside the space skybox
-camera.position.set(0, 15, 30);
+camera.position.set(0, 15, -30);
 controls.update();
 
 // Create and add the space background
@@ -40,6 +40,7 @@ textureLoader.load('assets/spacebox/textures/lambert1_emissive.jpeg', (texture) 
   const spaceGeometry = new THREE.SphereGeometry(9000, 60, 40);
   const spaceMaterial = new THREE.MeshBasicMaterial({
     map: texture,
+    color: new THREE.Color(0x777777),
     side: THREE.BackSide
   });
   const spaceSphere = new THREE.Mesh(spaceGeometry, spaceMaterial);
